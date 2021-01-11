@@ -48,7 +48,7 @@ $.dvvsetTests = function(options){
 	var Y = APITests.dvvset.create(APITests.dvvset.new_list(["v2"]), "b");
 	var A1 = APITests.dvvset.create(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A), ["v2"]), "a");
 	var A3 = APITests.dvvset.create(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A1), ["v3"]), "b");
-	var A4 = APITests.dvvset.create(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A1), ["v2"]), "c");
+	var A4 = APITests.dvvset.create(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A1), ["v3"]), "c");
 
 	var W = [[["a",1,[]]],[]];
 	var Z = [[["a",2,["v2","v1"]]],[]];
@@ -67,6 +67,7 @@ $.dvvsetTests = function(options){
 	result2 = APITests.dvvset.sync([A3, A4]);
 	if(JSON.stringify(result1) != JSON.stringify(result2)) return "sync error 4";
 
+
 	if(JSON.stringify(result1) != '[[["a",2,[]],["b",1,["v3"]],["c",1,["v3"]]],[]]') return "sync error 5";
 
 	result1 = APITests.dvvset.sync([X, A]);
@@ -83,7 +84,7 @@ $.dvvsetTests = function(options){
     },
     test_sync_update: function(){
 	// Mary writes v1 w/o VV
-	var A0 = APITests.dvvset.create(APITests.dvvset.new_list(["v1"]), "1");
+	var A0 = APITests.dvvset.create(APITests.dvvset.new_list(["v1"]), "a");
 	// Peter reads v1 with version vector (VV)
 	var VV1 = APITests.dvvset.join(A0);
 	// Mary writes v2 w/o VV
@@ -108,14 +109,19 @@ $.dvvsetTests = function(options){
 	return "OK";
     },
     test_less: function(){
+	return "OK"; // TODO
     },
     test_equal: function(){
+	return "OK"; // TODO
     },
     test_size: function(){
+	return "OK"; // TODO
     },
     test_values: function(){
+	return "OK"; // TODO
     },
     test_ids_values: function(){
+	return "OK"; // TODO
     },
     main: function(){
 	var div = $('div#results');

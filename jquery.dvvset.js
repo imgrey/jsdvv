@@ -75,21 +75,21 @@ $.dvvset = function(options){
       clock1_values = clock1[1];
       clock2_entires = clock2[0];
       clock2_values = clock2[1];
-      var values=[];
+      var values = new Array();
       if(API.less(clock1, clock2)){
 	values = clock2_values
       } else {
 	if(API.less(clock2, clock1)){
 	  values = clock1_values
 	} else {
-	  values = new Set();
+	  var newset = new Set();
 	  for(var i=0;i!=clock1_values.length;i++){
-	    values.add(clock1_values[i]);
+	    newset.add(clock1_values[i]);
 	  }
 	  for(var i=0;i!=clock2_values.length;i++){
-	    values.add(clock2_values[i]);
+	    newset.add(clock2_values[i]);
 	  }
-	  values = Array.from(values);
+	  values = Array.from(newset);
 	}
       }
       return [API._sync2(clock1_entires, clock2_entires), values];
@@ -100,14 +100,14 @@ $.dvvset = function(options){
       head1 = entries1[0];
       head2 = entries2[0];
       if(API._cmp_fun(head2[0], head1[0])){
-	return [head1].concat( API._sync2(entries1.splice(1, entries1.length), entries2) );
+	return [head1].concat( API._sync2(entries1.slice(0).splice(1, entries1.length), entries2) );
       }
       if(API._cmp_fun(head1[0], head2[0])) {
-	return [head2].concat(API._sync2(entries2.splice(1, entries2.length), entries1))
+	return [head2].concat(API._sync2(entries2.slice(0).splice(1, entries2.length), entries1))
       }
       var to_merge = head1.concat([head2[1], head2[2]]);
       var result = API._merge(...to_merge);
-      return [result].concat(API._sync2(entries1.splice(1, entries1.length), entries2.splice(1, entries2.length)));
+      return [result].concat(API._sync2(entries1.slice(0).splice(1, entries1.length), entries2.slice(0).splice(1, entries2.length)));
     },
     /*
      * Returns [id(), counter(), values()]
@@ -117,10 +117,10 @@ $.dvvset = function(options){
       var len2 = values2.length;
       if(counter1 >= counter2) {
 	if(counter1 - len1 >= counter2 - len2) return [the_id, counter1, values1];
-	return [the_id, counter1, values1.splice(0, counter1 - counter2 + len2)];
+	return [the_id, counter1, values1.slice(0).splice(0, counter1 - counter2 + len2)];
       }
       if(counter2 - len2 >= counter1 - len1) return [the_id, counter2, values2];
-      return [the_id, counter2, values2.splice(0, counter2 - counter1 + len1)];
+      return [the_id, counter2, values2.slice(0).splice(0, counter2 - counter1 + len1)];
     },
     join: function(clock){
       values = clock[0]
@@ -171,14 +171,14 @@ $.dvvset = function(options){
 	} else {
 	    var values = [value].concat(vector[0][2]);
 	}
-	return [[vector[0][0], vector[0][1]+1, values].concat(vector.splice(1, vector.length))];
+	return [[vector[0][0], vector[0][1]+1, values].concat(vector.slice(0).splice(1, vector.length))];
       }
       if(vector.length > 0 && vector[0].length > 0) {
 	if(Array.isArray(vector[0][0]) || vector[0][0].length > the_id.length) {
 	  return [[the_id, 1, [value]]].concat(vector);
 	}
       }
-      var itm = API.event(vector.splice(1, vector.length), the_id, value);
+      var itm = API.event(vector.slice(0).splice(1, vector.length), the_id, value);
       return [vector[0]].concat(itm);
     },
     size: function(clock){
@@ -232,7 +232,7 @@ $.dvvset = function(options){
       if(vector1.length > 0 && vector1[0].length > 0 && vector2.length > 0 && vector2[0].length > 0){
 	if(vector1[0][0] == vector2[0][0]){
 	  if(vector1[0] > 1 && vector2[0] > 1 && vector1[0][1] == vector2[0][1]){
-	    if(vector1[0][2] == vector2[0][2]) return API._equal(vector1.splice(1, vector1.length), vector2.splice(1, vector2.length))
+	    if(vector1[0][2] == vector2[0][2]) return API._equal(vector1.slice(0).splice(1, vector1.length), vector2.slice(0).splice(1, vector2.length))
 	  }
 	}
       }
@@ -243,17 +243,17 @@ $.dvvset = function(options){
       if(vector2.length==0) return true;
       if(vector1.length==0) return false;
       if(vector1[0][0] == vector2[0][0]){
-	dot_number1 = vector1[0][1];
-	dot_number2 = vector2[0][1];
+	var dot_number1 = vector1[0][1];
+	var dot_number2 = vector2[0][1];
 	if(dot_number1 == dot_number2){
-	  return API._greater(vector1.splice(1, vector1.length), vector2.splice(1, vector2.length), strict);
+	  return API._greater(vector1.slice(0).splice(1, vector1.length), vector2.slice(0).splice(1, vector2.length), strict);
 	}
 	if(dot_number1 > dot_number2) {
-	  return API._greater(vector1.splice(1, vector1.length), vector2.splice(1, vector2.length), true);
+	  return API._greater(vector1.slice(0).splice(1, vector1.length), vector2.slice(0).splice(1, vector2.length), true);
 	}
 	if(dot_number1 < dot_number2) return false;
       }
-      if(API._cmp_fun(vector2[0][0], vector1[0][0])) return API._greater(vector1.splice(1, vector1.length), vector2, true);
+      if(API._cmp_fun(vector2[0][0], vector1[0][0])) return API._greater(vector1.slice(0).splice(1, vector1.length), vector2, true);
       return false;
     },
     /*
