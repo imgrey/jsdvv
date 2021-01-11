@@ -96,7 +96,7 @@ $.dvvset = function(options){
     },
     _sync2: function(entries1, entries2){
       if(entries1.length==0) return entries2;
-      if(entries2.length==1) return entries1;
+      if(entries2.length==0) return entries1;
       head1 = entries1[0];
       head2 = entries2[0];
       if(API._cmp_fun(head2[0], head1[0])){
@@ -105,9 +105,9 @@ $.dvvset = function(options){
       if(API._cmp_fun(head1[0], head2[0])) {
 	return [head2].concat(API._sync2(entries2.splice(1, entries2.length), entries1))
       }
-      to_merge = head1.concat([head2[1], head2[2]]);
+      var to_merge = head1.concat([head2[1], head2[2]]);
       var result = API._merge(...to_merge);
-      return result.concat(API._sync2(entries1.splice(1, entries1.length), entries2.splice(1, entries2.length)));
+      return [result].concat(API._sync2(entries1.splice(1, entries1.length), entries2.splice(1, entries2.length)));
     },
     /*
      * Returns [id(), counter(), values()]
@@ -127,7 +127,7 @@ $.dvvset = function(options){
       result = []
       for(var i=0;i!=values.length;i++){
 	value = values[i];
-	if(value.length==0) continue;
+	if(!value) continue;
 	result.push([value[0], value[1]]);
       }
       return result;
@@ -150,27 +150,36 @@ $.dvvset = function(options){
      */
     update: function(clock1, clock2, the_id){
       // Sync both clocks without the new value
-      var entries = [];
-      if(clock1.length>0) entries = clock1[0]
-      var dot = API._sync([entries, []], clock2);
+      var clock1_entries = [];
+      if(clock1.length>0) clock1_entries = clock1[0]
+      var dot = API._sync([clock1_entries, []], clock2);
       var clock = dot[0];
       var values = dot[1];
       // We create a new event on the synced causal history,
       // with the id I and the new value.
       // The anonymous values that were synced still remain.
-      var clock_values = [];
+      var clock_values;
       if(clock1.length>0) clock_values = clock1[1];
-      if(Array.isArray(clock_values)) clock_values = clock_values[0];
+      if(Array.isArray(clock1[1])) clock_values = clock1[1][0];
       return [API.event(clock, the_id, clock_values), values];
     },
     event: function(vector, the_id, value){
       if(vector.length==0) return [[the_id, 1, [value]]];
       if( vector.length > 0 && vector[0].length > 0 && vector[0][0] == the_id ) {
+	if(Array.isArray(value)){
+	    var values = value.concat(vector[0][2]);
+	} else {
+	    var values = [value].concat(vector[0][2]);
+	}
+	return [[vector[0][0], vector[0][1]+1, values].concat(vector.splice(1, vector.length))];
+      }
+      if(vector.length > 0 && vector[0].length > 0) {
 	if(Array.isArray(vector[0][0]) || vector[0][0].length > the_id.length) {
 	  return [[the_id, 1, [value]]].concat(vector);
 	}
       }
-      return [vector[0]].concat(API.event(vector.splice(1, vector.length), the_id, value));
+      var itm = API.event(vector.splice(1, vector.length), the_id, value);
+      return [vector[0]].concat(itm);
     },
     size: function(clock){
       var result = 0;

@@ -22,16 +22,16 @@ $.dvvsetTests = function(options){
 	if(result1.length != 0) return "new_dvv error";
 
 	var result2 = APITests.dvvset.join(A1);
-	if(JSON.stringify(result2) != '[["a",1]]') "create error";
+	if(JSON.stringify(result2) != '[["a",1]]') return "create error";
 
 	var result3 = APITests.dvvset.join(B1);
-	if(JSON.stringify(result3) != '[["a",1],["b",1]]') "update error";
+	if(JSON.stringify(result3) != '[["a",1],["b",1]]') return "update error";
 	return "OK";
     },
     test_update: function(){
 	var A0 = APITests.dvvset.create(APITests.dvvset.new_dvv("v1"), "a");
 	var A1 = APITests.dvvset.update(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A0), ["v2"]), A0, "a");
-	var A2 = APITests.dvvset.update(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A0), ["v3"]), A1, "b");
+	var A2 = APITests.dvvset.update(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A1), ["v3"]), A1, "b");
 	var A3 = APITests.dvvset.update(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A0), ["v4"]), A1, "b");
 	var A4 = APITests.dvvset.update(APITests.dvvset.new_list_with_history(APITests.dvvset.join(A0), ["v5"]), A1, "a");
 
